@@ -1,6 +1,7 @@
 ---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.LITLabTheme:main.yml
 ---
 metadata:
   title: >-
@@ -9,15 +10,30 @@ metadata:
     Authorization Agreement for Voluntary Adult Caregiver
   description: |-
     This interview helps a parent complete a Texas Authorization Agreement for
-    Voluntary Adult Caregiver, which temporarily authorizes a nonparent adult to
-    make certain decisions for a child without going to court.
+    Voluntary Adult Caregiver.
+    
+    Use this form to give someone temporary permission to make important decisions
+    about your child's school and medical situation. You do not need to go to court
+    to use this form, so it may be a good alternative to a guardianship or custody case.
+
+    You may want to use this form if you are a parent who needs to leave your child with
+    a relative or family friend for a while. For example: before you travel outside
+    of the United States, either for a short or a long time.
+    
+    The caregiver must be at least 18 years
+    old. They do not have to be related to the child.
   can_I_use_this_form: |
-    Use this form only if you are a parent authorizing a nonparent adult caregiver
-    (such as a relative or family friend) to make certain decisions for a child.
-    At least one parent and the caregiver must sign. You must get court permission
+    You can use this form if you are one of the parents of a child. If there are two
+    parents, in most cases you need to let the other parent know and give them a copy
+    of this form.
+
+    You must get court permission
     if there is an existing court order or a pending court case involving the child.
+    
     This authorization does not allow the caregiver to consent to an abortion or
-    emergency contraception. If no parent can be found, a different court process
+    emergency contraception. 
+    
+    If no parent can be found, a different court process
     may be required. Leaving a child with a nonparent for a long time can affect
     parental rights, so consider legal advice.
   before_you_start: |
@@ -75,6 +91,9 @@ metadata:
     - Authorization Agreement for Voluntary Adult Caregiver
   form_numbers: []
   update_notes: |
+---
+template: interview_short_title
+content: Give a trusted adult permission to take care of your child
 ---
 code: |
   # This controls the default country and list of states in address field questions
