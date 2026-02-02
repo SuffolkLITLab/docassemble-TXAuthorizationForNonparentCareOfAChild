@@ -169,11 +169,13 @@ subquestion: |
   old. They do not have to be related to the child.
 
   The caregiver can do things like:
+
   * get medical care
   * enroll the child in school or daycare
   * and apply for benefits.
   
   The caregiver **cannot**:
+
   * consent to an abortion
   * consent to emergency contraception.
   
@@ -244,9 +246,9 @@ subquestion: |
   not sign, you must mail them a copy within 10 days after the agreement is signed.
 fields:
   - "Is the child's other parent known?": other_parent_known
-    datatype: yesno
+    datatype: yesnoradio
   - "Will the other parent sign the agreement?": other_parent_will_sign
-    datatype: yesno
+    datatype: yesnoradio
     show if: other_parent_known
   - "Other parent full name": users[1].name
     datatype: name
@@ -345,6 +347,9 @@ subquestion: |
 fields:
   - "I understand I must sign in front of a notary": notary_instructions_acknowledgement
     datatype: yesno
+validation code: |
+  if not notary_instructions_acknowledgement:
+      raise ValidationError("You must acknowledge the notary requirement to continue.")
 ---
 id: mailing_requirement
 question: |
@@ -358,9 +363,13 @@ subquestion: |
   there is a protective order or certain criminal convictions.
 fields:
   - "I understand the mailing requirement": mailing_requirement_acknowledgement
-    datatype: yesno
+    datatype: yesnoradio
     show if:
       code: other_parent_known and (not other_parent_will_sign)
+validation code: |
+  if other_parent_known and (not other_parent_will_sign):
+      if not mailing_requirement_acknowledgement:
+          raise ValidationError("You must acknowledge the mailing requirement to continue.")
 ---
 id: preview authorization_agreement_for_voluntary_adult_caregiver
 question: |
