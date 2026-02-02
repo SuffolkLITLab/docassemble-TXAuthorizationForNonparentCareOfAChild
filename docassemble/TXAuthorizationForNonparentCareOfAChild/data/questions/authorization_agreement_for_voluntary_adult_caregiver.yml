@@ -1,0 +1,603 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+---
+metadata:
+  title: >-
+    Authorization Agreement for Voluntary Adult Caregiver
+  short title: >-
+    Authorization Agreement for Voluntary Adult Caregiver
+  description: |-
+    This interview helps a parent complete a Texas Authorization Agreement for
+    Voluntary Adult Caregiver, which temporarily authorizes a nonparent adult to
+    make certain decisions for a child without going to court.
+  can_I_use_this_form: |
+    Use this form only if you are a parent authorizing a nonparent adult caregiver
+    (such as a relative or family friend) to make certain decisions for a child.
+    At least one parent and the caregiver must sign. You must get court permission
+    if there is an existing court order or a pending court case involving the child.
+    This authorization does not allow the caregiver to consent to an abortion or
+    emergency contraception. If no parent can be found, a different court process
+    may be required. Leaving a child with a nonparent for a long time can affect
+    parental rights, so consider legal advice.
+  before_you_start: |
+    Before you start, gather:
+
+    * The child's full name and date of birth.
+    * Each parent's current address, phone number, and other contact information.
+    * The caregiver's current address, phone number, and other contact information.
+    * Information about any court order or pending case involving the child.
+    * Any important child documents you may want to share (birth certificate,
+      insurance card, school or medical records).
+
+    You will need to sign the form in front of a notary. If only one parent signs,
+    you must mail a copy of the signed form to the other parent within 10 days. You
+    may not have to mail a copy in limited situations, such as when parental rights
+    were terminated or certain safety exceptions apply.
+  when_you_are_finished: |
+    Sign the agreement in front of a notary. Give the caregiver a copy and keep a
+    copy for your records. If only one parent signed, mail a copy to the other
+    parent within 10 days by certified mail (return receipt requested) and by
+    regular mail. If there is a court order or pending case, get written court
+    permission and attach the court order to your agreement. You can revoke the
+    agreement in writing at any time.
+    You may also want to add the caregiver as an emergency contact with the
+    child's school, doctor, and childcare provider.
+  integrated_efiling: False
+  integrated_email_filing: False
+  landing_page_url: https://texaslawhelp.org/article/authorization-for-nonparent-care-of-a-child
+  maturity: production
+  estimated_completion_minutes: 20
+  estimated_completion_delta: 10
+  LIST_topics:
+    - FA-04-08-00-00
+    - ES-03-03-00-00
+  tags:
+    - FA-04-08-00-00
+    - ES-03-03-00-00
+  authors:
+    - Court Forms Online
+  approved_by: []
+  original_form:
+    - https://texaslawhelp.org/form/authorization-agreement-for-voluntary-non-parent-caregiver
+  original_form_published_on: 2017-10-01
+  help_page_url: https://texaslawhelp.org/article/authorization-for-nonparent-care-of-a-child
+  help_page_title: Authorization for Nonparent Care of a Child (Texas Law Help)
+  allowed_courts: []
+  typical_role: "unknown"
+  al_weaver_version: "1.11.0"
+  generated_on: "2026-02-02"
+  languages:
+    - en
+  jurisdiction: NAM-US-US+TX
+  review_date: 2026-02-02
+  form_titles:
+    - Authorization Agreement for Voluntary Adult Caregiver
+  form_numbers: []
+  update_notes: |
+---
+code: |
+  # This controls the default country and list of states in address field questions
+  AL_DEFAULT_COUNTRY = "US"
+---
+code: |
+  # This controls the default state in address field questions
+  AL_DEFAULT_STATE = "TX"
+---
+code: |
+  github_repo_name =  'docassemble-AuthorizationAgreementForVoluntaryAdultCaregiver'
+---
+code: |
+  al_form_type = "starts_case"
+---
+sections:
+  - review_authorization_agreement_for_voluntary_adult_caregiver: Review your answers
+---
+comment: |
+  Controls order and branching logic for questions specific to this form
+id: interview_order_authorization_agreement_for_voluntary_adult_caregiver
+code: |
+  # Set the allowed courts for this interview
+  allowed_courts = []
+  nav.set_section("review_authorization_agreement_for_voluntary_adult_caregiver")
+  # This is always a starting form
+  user_role = "plaintiff"
+  user_ask_role = "plaintiff"
+  eligibility_acknowledgement
+  children[0].name.first
+  users[0].name.first
+  other_parent_known
+  caregivers[0].name.first
+  caregivers1_relationship_to_child
+  no_other_custody_claimant
+  child_court_involvement_status
+  agreement_term_choice
+  notary_instructions_acknowledgement
+  if other_parent_known and (not other_parent_will_sign):
+      mailing_requirement_acknowledgement
+  interview_order_authorization_agreement_for_voluntary_adult_caregiver = True
+---
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: True
+code: |
+  al_intro_screen
+  authorization_agreement_for_voluntary_adult_caregiver_intro
+  interview_order_authorization_agreement_for_voluntary_adult_caregiver
+  signature_date
+  # Store anonymous data for analytics / statistics
+  store_variables_snapshot(
+      persistent=True,
+      data={
+          "zip": showifdef("users[0].address.zip"),
+          "reached_interview_end": True,
+      },
+  )
+  authorization_agreement_for_voluntary_adult_caregiver_download
+---
+id: Authorization_Agreement_for_Voluntary_Adult_Caregiver
+continue button field: authorization_agreement_for_voluntary_adult_caregiver_intro
+question: |
+  Authorization Agreement for Voluntary Adult Caregiver
+subquestion: |
+  This form lets a parent give a nonparent adult caregiver temporary permission
+  to make some decisions for a child. You do **not** need to go to court to use
+  this form.
+
+  You may want to use this form if you are a parent who needs to leave your child with
+  a relative or family friend for a while. The caregiver must be at least 18 years
+  old. They do not have to be related to the child.
+
+  The caregiver can do things like:
+  * get medical care
+  * enroll the child in school or daycare
+  * and apply for benefits.
+  
+  The caregiver **cannot**:
+  * consent to an abortion
+  * consent to emergency contraception.
+  
+  This form does **not** give custody. It only gives temporary permission, for up to
+  six months. You can end it any time in writing.
+
+  Everyone who must sign will sign in front of a notary. If only one parent signs,
+  you must mail a copy to the other parent within 10 days.
+---
+id: eligibility
+question: |
+  Before you start
+subquestion: |
+  Use this form only if **a parent** is giving permission to **an adult caregiver**
+  (18 or older). The caregiver does not have to be related to the child.
+
+  You need court permission if there is a court order or a pending court case about
+  the child. If no parent can be found, a different process may be required.
+
+  At least one parent and the caregiver must sign in front of a notary. If only one
+  parent signs, you must mail a copy to the other parent.
+
+  This agreement does not change the child's immigration status.
+fields:
+  - "I am a parent with legal authority to sign this authorization agreement": eligibility_acknowledgement
+    datatype: yesno
+---
+code: |
+  # This form is for one child and one caregiver
+  children.there_is_another = False
+  caregivers.there_is_another = False
+  children.there_are_any = True
+  users.there_are_any = True
+  users.there_is_another = False
+---
+id: child_information
+question: |
+  Child's information
+subquestion: |
+  Enter the child's name and date of birth.
+fields:
+  - "Child's full name": children[0].name
+    datatype: name
+  - "Child's date of birth": children[0].birthdate
+    datatype: date
+---
+id: parent_1_information
+question: |
+  Parent 1 information
+subquestion: |
+  Enter the information for the parent completing this form.
+fields:
+  - "Parent 1 full name": users[0].name
+    datatype: name
+  - "Parent 1 address": users[0].address
+    datatype: address
+  - "Parent 1 phone number": users[0].phone_number
+  - "Other contact information (optional)": users1_other_contact
+    input type: area
+    maxlength: 158
+---
+id: other_parent_information
+question: |
+  Other parent information
+subquestion: |
+  If the child's other parent is known, enter their information. If that parent
+  will sign the agreement, we will include a signature line for them. If they do
+  not sign, you must mail them a copy within 10 days after the agreement is signed.
+fields:
+  - "Is the child's other parent known?": other_parent_known
+    datatype: yesno
+  - "Will the other parent sign the agreement?": other_parent_will_sign
+    datatype: yesno
+    show if: other_parent_known
+  - "Other parent full name": users[1].name
+    datatype: name
+    show if: other_parent_known
+  - "Other parent address": users[1].address
+    datatype: address
+    show if: other_parent_known
+  - "Other parent phone number": users[1].phone_number
+    show if: other_parent_known
+  - "Other parent other contact information (optional)": users2_other_contact
+    input type: area
+    maxlength: 158
+    show if: other_parent_known
+---
+code: |
+  if not other_parent_known:
+      users[1].name.first = ""
+      users[1].name.last = ""
+      users[1].address.address = ""
+      users[1].phone_number = ""
+      users2_other_contact = ""
+      other_parent_will_sign = False
+---
+id: caregiver_information
+question: |
+  Caregiver information
+subquestion: |
+  Enter the information for the adult caregiver you are authorizing.
+fields:
+  - "Caregiver full name": caregivers[0].name
+    datatype: name
+  - "Caregiver address": caregivers[0].address
+    datatype: address
+  - "Caregiver phone number": caregivers[0].phone_number
+  - "Other contact information (optional)": caregivers1_other_contact
+    input type: area
+    maxlength: 158
+---
+id: caregiver_relationship
+question: |
+  Caregiver's relationship to the child
+subquestion: |
+  Choose the option that best fits the caregiver.
+fields:
+  - "Relationship to child": caregivers1_relationship_to_child
+    input type: radio
+    choices:
+      - Adult caregiver
+      - Parental Child Safety Placement voluntary caregiver
+---
+id: court_and_custody
+question: |
+  Court orders and other custody claims
+subquestion: |
+  You must get court permission if there is a court order or a pending court case
+  about the child. If there is court involvement, the court must approve this
+  agreement. If another authorization agreement is still in effect for this child,
+  this agreement is not valid.
+fields:
+  - "No other person or agency claims custody or control that conflicts with this agreement": no_other_custody_claimant
+    datatype: yesno
+  - "Court involvement status": child_court_involvement_status
+    input type: radio
+    choices:
+      - There is no court order or pending case about this child.
+      - There is a court order or pending case, and the court has approved this agreement.
+---
+id: agreement_term
+question: |
+  How long should the agreement last?
+subquestion: |
+  The agreement usually lasts six months from the date it is signed. It can end
+  sooner if you revoke it in writing or if a court order affects the child. If you
+  want it to end sooner, set an earlier expiration date.
+fields:
+  - "Choose the term": agreement_term_choice
+    input type: radio
+    choices:
+      - Use the standard term in the form (six months)
+      - Set an earlier expiration date
+  - "Earlier expiration date": agreement_expiration_date
+    datatype: date
+    show if:
+      variable: agreement_term_choice
+      is: Set an earlier expiration date
+  - "If you want to end it earlier for specific reasons, list them here (optional)": agreement_early_termination_circumstances
+    input type: area
+    maxlength: 148
+---
+id: notary_instructions
+question: |
+  Notary required
+subquestion: |
+  Everyone who must sign must do it in front of a notary. Do **not** sign until
+  you are with the notary.
+fields:
+  - "I understand I must sign in front of a notary": notary_instructions_acknowledgement
+    datatype: yesno
+---
+id: mailing_requirement
+question: |
+  Mailing a copy to the other parent
+subquestion: |
+  If only one parent signs, you must mail a copy of the signed agreement to the
+  other parent within **10 days**. Send it by **certified mail (return receipt
+  requested)** and by **regular mail**. You do not have to mail a copy to a
+  parent whose parental rights were terminated. Other exceptions may apply if
+  the non-signing parent does not have court-ordered visitation or access and
+  there is a protective order or certain criminal convictions.
+fields:
+  - "I understand the mailing requirement": mailing_requirement_acknowledgement
+    datatype: yesno
+    show if:
+      code: other_parent_known and (not other_parent_will_sign)
+---
+id: preview authorization_agreement_for_voluntary_adult_caregiver
+question: |
+  Preview your form before you sign it
+subquestion: |
+  Here is a preview of the form you will sign on the next page.
+
+  ${ al_court_bundle.as_pdf(key='preview') }
+
+  Click the image to open it in a new tab. Click the "Edit answers" button
+  to edit your answers.
+
+  ${ action_button_html(url_action('review_authorization_agreement_for_voluntary_adult_caregiver'), label='Edit answers', color='info') }
+
+  Remember to come back to this window to continue and sign your form.
+continue button field: authorization_agreement_for_voluntary_adult_caregiver_preview_question
+---
+code: |
+  signature_fields = ['users[0].signature', 'caregivers[0].signature']
+  if other_parent_will_sign:
+      signature_fields.insert(1, 'users[1].signature')
+---
+code: |
+  # This is a placeholder for the addresses that will be searched
+  # for matching address to court. Edit if court venue is based on
+  # a different address than the user's
+  [user.address.address for user in users.complete_elements()]
+  addresses_to_search = [user.address for user in users.complete_elements()]
+---
+id: authorization agreement for voluntary adult caregiver review screen
+event: review_authorization_agreement_for_voluntary_adult_caregiver
+question: |
+  Review your answers
+review:
+  - Edit: children.revisit
+    button: |
+      **Child**
+
+      % for item in children:
+        * ${ item }
+      % endfor
+  - Edit: users.revisit
+    button: |
+      **Parents**
+
+      % for item in users:
+        * ${ item }
+      % endfor
+  - Edit: users1_other_contact
+    button: |
+      **Parent 1 other contact information**:
+      > ${ single_paragraph(users1_other_contact) }
+  - Edit: users2_other_contact
+    button: |
+      **Parent 2 other contact information**:
+      > ${ single_paragraph(users2_other_contact) }
+  - Edit: caregivers.revisit
+    button: |
+      **Caregiver**
+
+      % for item in caregivers:
+        * ${ item }
+      % endfor
+  - Edit: caregivers1_relationship_to_child
+    button: |
+      **Caregiver relationship to child**:
+      ${ caregivers1_relationship_to_child }
+  - Edit: caregivers1_other_contact
+    button: |
+      **Caregiver other contact information**:
+      > ${ single_paragraph(caregivers1_other_contact) }
+  - Edit: other_parent_known
+    button: |
+      **Other parent known**:
+      ${ word(yesno(other_parent_known)) }
+  - Edit: other_parent_will_sign
+    button: |
+      **Other parent will sign**:
+      ${ word(yesno(other_parent_will_sign)) }
+  - Edit: no_other_custody_claimant
+    button: |
+      **No conflicting custody claim**:
+      ${ word(yesno(no_other_custody_claimant)) }
+  - Edit: child_court_involvement_status
+    button: |
+      **Court involvement status**:
+      ${ child_court_involvement_status }
+  - Edit: agreement_term_choice
+    button: |
+      **Agreement term**:
+      ${ agreement_term_choice }
+  - Edit: agreement_expiration_date
+    button: |
+      **Earlier expiration date**:
+      ${ agreement_expiration_date }
+  - Edit: agreement_early_termination_circumstances
+    button: |
+      **Early termination circumstances**:
+      > ${ single_paragraph(agreement_early_termination_circumstances) }
+---
+continue button field: children.revisit
+question: |
+  Edit children
+subquestion: |
+  ${ children.table }
+
+  ${ children.add_action() }
+---
+table: children.table
+rows: children
+columns:
+  - Name: |
+      row_item.name_full() if defined("row_item.name.first") else ""
+  - Birthdate: |
+      row_item.birthdate if defined("row_item.birthdate") else ""
+edit:
+  - name.first
+  - birthdate
+confirm: True
+
+---
+continue button field: users.revisit
+question: |
+  Edit users
+subquestion: |
+  ${ users.table }
+
+  ${ users.add_action() }
+---
+table: users.table
+rows: users
+columns:
+  - Name: |
+      row_item.name_full() if defined("row_item.name.first") else ""
+  - Address: |
+      row_item.address.block() if defined("row_item.address.address") else ""
+  - Phone number: |
+      row_item.phone_number if defined("row_item.phone_number") else ""
+  - Signature: |
+      row_item.signature if defined("row_item.signature") else ""
+edit:
+  - name.first
+  - address.address
+  - phone_number
+  - signature
+confirm: True
+
+---
+continue button field: caregivers.revisit
+question: |
+  Edit caregivers
+subquestion: |
+  ${ caregivers.table }
+
+  ${ caregivers.add_action() }
+---
+table: caregivers.table
+rows: caregivers
+columns:
+  - Name: |
+      row_item.name_full() if defined("row_item.name.first") else ""
+  - Address: |
+      row_item.address.block() if defined("row_item.address.address") else ""
+  - Phone number: |
+      row_item.phone_number if defined("row_item.phone_number") else ""
+  - Signature: |
+      row_item.signature if defined("row_item.signature") else ""
+edit:
+  - name.first
+  - address.address
+  - phone_number
+  - signature
+confirm: True
+
+---
+id: download authorization_agreement_for_voluntary_adult_caregiver
+event: authorization_agreement_for_voluntary_adult_caregiver_download
+question: |
+  All done
+subquestion: |
+  Thank you ${users}. Your form is ready to download and use.
+
+  View and download your form below. Click the "Edit answers" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_authorization_agreement_for_voluntary_adult_caregiver'), label='Edit answers', color='info') }
+
+
+  ${ al_user_bundle.download_list_html() }
+
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
+
+progress: 100
+---
+# ALDocument objects specify the metadata for each template
+objects:
+  - authorization_agreement_for_voluntary_adult_caregiver_Post_interview_instructions: ALDocument.using(title="Instructions", filename="authorization_agreement_for_voluntary_adult_caregiver_next_steps.docx", enabled=True, has_addendum=False)
+  - authorization_agreement_for_voluntary_adult_caregiver_attachment: ALDocument.using(title="Authorization Agreement for Voluntary Adult Caregiver", filename="authorization_agreement_for_voluntary_adult_caregiver", enabled=True, has_addendum=False, )
+---
+# Bundles group the ALDocuments into separate downloads, such as for court and for the user
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[authorization_agreement_for_voluntary_adult_caregiver_Post_interview_instructions, authorization_agreement_for_voluntary_adult_caregiver_attachment], filename="authorization_agreement_for_voluntary_adult_caregiver", title="All forms to download for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[authorization_agreement_for_voluntary_adult_caregiver_attachment],  filename="authorization_agreement_for_voluntary_adult_caregiver", title="All forms to deliver to court", enabled=True)
+---
+# Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is
+# used for "preview" and "final" keys, and logic in the template checks the value of
+# `i` to show or hide the user's signature
+attachment:
+  name: Post-interview-Instructions
+  filename: authorization_agreement_for_voluntary_adult_caregiver_next_steps
+  docx template file: authorization_agreement_for_voluntary_adult_caregiver_next_steps.docx
+  variable name: authorization_agreement_for_voluntary_adult_caregiver_Post_interview_instructions[i]
+  skip undefined: True
+  tagged pdf: True
+---
+attachment:
+  name: authorization agreement for voluntary adult caregiver
+  filename: authorization_agreement_for_voluntary_adult_caregiver
+  variable name: authorization_agreement_for_voluntary_adult_caregiver_attachment[i]
+  skip undefined: True
+  pdf template file: 2638.pdf
+  fields:
+      - "children1_name": ${ children[0] }
+      - "children1_birthdate": ${ children[0].birthdate.format() }
+      - "users1_name": ${ users[0] }
+      - "users1_name__1": ${ users[0] }
+      - "users1_address_on_one_line": ${ users[0].address.on_one_line() }
+      - "users1_phone_number": ${ users[0].phone_number }
+      - "users1_other_contact": ${ users1_other_contact }
+      - "users2_name": ${ users[1] }
+      - "users2_name__1": ${ users[1] }
+      - "users2_address_on_one_line": ${ users[1].address.on_one_line() }
+      - "users2_phone_number": ${ users[1].phone_number }
+      - "users2_other_contact": ${ users2_other_contact }
+      - "caregivers1_name": ${ caregivers[0] }
+      - "caregivers1_name__1": ${ caregivers[0] }
+      - "caregivers1_relationship_to_child": ${ caregivers1_relationship_to_child }
+      - "caregivers1_address_on_one_line": ${ caregivers[0].address.on_one_line() }
+      - "caregivers1_phone_number": ${ caregivers[0].phone_number }
+      - "caregivers1_other_contact": ${ caregivers1_other_contact }
+      - "no_other_custody_claimant": ${ no_other_custody_claimant }
+      - "child_court_involvement_status": ${ child_court_involvement_status }
+      - "agreement_expiration_date": ${ agreement_expiration_date.format() }
+      - "agreement_early_termination_circumstances": ${ agreement_early_termination_circumstances }
+      # - "users1_signature": ${ users[0].signature_if_final(i) }
+      # - "users1_notary_date_day": ${ users1_notary_date_day }
+      # - "users1_notary_date_month": ${ users1_notary_date_month }
+      # - "users1_notary_date_year": ${ users1_notary_date_year }
+      # - "users1_notary_signature": ${ users1_notary[0].signature }
+      # - "users2_signature": ${ users[1].signature_if_final(i) }
+      # - "users2_notary_date_day": ${ users2_notary_date_day }
+      # - "users2_notary_date_month": ${ users2_notary_date_month }
+      # - "users2_notary_date_year": ${ users2_notary_date_year }
+      # - "users2_notary_signature": ${ users2_notary[0].signature }
+      # - "caregivers1_signature": ${ caregivers[0].signature_if_final(i) }
+      # - "caregivers1_notary_date_day": ${ caregivers1_notary_date_day }
+      # - "caregivers1_notary_date_month": ${ caregivers1_notary_date_month }
+      # - "caregivers1_notary_date_year": ${ caregivers1_notary_date_year }
+      # - "caregivers1_notary_signature": ${ caregivers1_notary[0].signature }
