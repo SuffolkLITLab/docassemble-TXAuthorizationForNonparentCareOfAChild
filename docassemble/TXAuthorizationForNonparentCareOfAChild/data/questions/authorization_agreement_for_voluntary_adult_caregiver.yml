@@ -112,6 +112,9 @@ code: |
 sections:
   - review_authorization_agreement_for_voluntary_adult_caregiver: Review your answers
 ---
+objects:
+  - children: ALPeopleList.using(ask_number=True, target_number=1)
+---
 comment: |
   Controls order and branching logic for questions specific to this form
 id: interview_order_authorization_agreement_for_voluntary_adult_caregiver
@@ -202,12 +205,13 @@ subquestion: |
 fields:
   - "I am a parent with legal authority to sign this authorization agreement": eligibility_acknowledgement
     datatype: yesno
+validation code: |
+  if not eligibility_acknowledgement:
+      raise ValidationError("You must confirm that you are a parent with legal authority to sign this authorization agreement to continue.")
 ---
 code: |
   # This form is for one child and one caregiver
-  children.there_is_another = False
   caregivers.there_is_another = False
-  children.there_are_any = True
   users.there_are_any = True
   users.there_is_another = False
 ---
@@ -227,11 +231,16 @@ question: |
   Parent 1 information
 subquestion: |
   Enter the information for the parent completing this form.
+sets:
+  - users[0].address.address
+  - users[0].address.city
+  - users[0].address.state
+  - users[0].address.zip
 fields:
   - "Parent 1 full name": users[0].name
     datatype: name
-  - "Parent 1 address": users[0].address
-    datatype: address
+  - code: |
+      users[0].address_fields()
   - "Parent 1 phone number": users[0].phone_number
   - "Other contact information (optional)": users1_other_contact
     input type: area
@@ -244,6 +253,11 @@ subquestion: |
   If the child's other parent is known, enter their information. If that parent
   will sign the agreement, we will include a signature line for them. If they do
   not sign, you must mail them a copy within 10 days after the agreement is signed.
+sets:
+  - users[1].address.address
+  - users[1].address.city
+  - users[1].address.state
+  - users[1].address.zip
 fields:
   - "Is the child's other parent known?": other_parent_known
     datatype: yesnoradio
@@ -253,8 +267,8 @@ fields:
   - "Other parent full name": users[1].name
     datatype: name
     show if: other_parent_known
-  - "Other parent address": users[1].address
-    datatype: address
+  - code: |
+      users[1].address_fields()
     show if: other_parent_known
   - "Other parent phone number": users[1].phone_number
     show if: other_parent_known
@@ -274,30 +288,30 @@ code: |
 ---
 id: caregiver_information
 question: |
-  Caregiver information
+  Caregiver name and role
 subquestion: |
-  Enter the information for the adult caregiver you are authorizing.
+  Enter the caregiver's name and choose their role.
+sets:
+  - caregivers[0].name.first
+  - caregivers[0].name.last
+  - caregivers[0].address.address
+  - caregivers[0].address.city
+  - caregivers[0].address.state
+  - caregivers[0].address.zip
 fields:
-  - "Caregiver full name": caregivers[0].name
-    datatype: name
-  - "Caregiver address": caregivers[0].address
-    datatype: address
-  - "Caregiver phone number": caregivers[0].phone_number
-  - "Other contact information (optional)": caregivers1_other_contact
-    input type: area
-    maxlength: 158
----
-id: caregiver_relationship
-question: |
-  Caregiver's relationship to the child
-subquestion: |
-  Choose the option that best fits the caregiver.
-fields:
+  - code: |
+      caregivers[0].name_fields()
   - "Relationship to child": caregivers1_relationship_to_child
     input type: radio
     choices:
       - Adult caregiver
       - Parental Child Safety Placement voluntary caregiver
+  - code: |
+      caregivers[0].address_fields()
+  - "Caregiver phone number": caregivers[0].phone_number
+  - "Other contact information (optional)": caregivers1_other_contact
+    input type: area
+    maxlength: 158
 ---
 id: court_and_custody
 question: |
@@ -324,19 +338,24 @@ subquestion: |
   sooner if you revoke it in writing or if a court order affects the child. If you
   want it to end sooner, set an earlier expiration date.
 fields:
-  - "Choose the term": agreement_term_choice
+  - "How long will the permission last?": agreement_term_choice
     input type: radio
     choices:
-      - Use the standard term in the form (six months)
-      - Set an earlier expiration date
+      - Up to six months from the date it is signed: six_months
+      - Set an earlier expiration date: earlier_date
   - "Earlier expiration date": agreement_expiration_date
     datatype: date
     show if:
       variable: agreement_term_choice
-      is: Set an earlier expiration date
+      is: earlier_date
+    required: False
   - "If you want to end it earlier for specific reasons, list them here (optional)": agreement_early_termination_circumstances
     input type: area
     maxlength: 148
+    required: False
+    show if:
+      variable: agreement_term_choice
+      is: earlier_date
 ---
 id: notary_instructions
 question: |
@@ -612,7 +631,7 @@ attachment:
       - "caregivers1_other_contact": ${ caregivers1_other_contact }
       - "no_other_custody_claimant": ${ no_other_custody_claimant }
       - "child_court_involvement_status": ${ child_court_involvement_status }
-      - "agreement_expiration_date": ${ agreement_expiration_date.format() }
+      - "agreement_expiration_date": ${ agreement_expiration_date.format() if defined('agreement_expiration_date') else '' }
       - "agreement_early_termination_circumstances": ${ agreement_early_termination_circumstances }
       # - "users1_signature": ${ users[0].signature_if_final(i) }
       # - "users1_notary_date_day": ${ users1_notary_date_day }
