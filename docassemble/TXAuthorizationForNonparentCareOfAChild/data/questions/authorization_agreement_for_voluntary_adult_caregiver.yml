@@ -239,7 +239,7 @@ fields:
     datatype: yesno
 validation code: |
   if not eligibility_acknowledgement:
-      raise validation_error("You must confirm that you are a parent with legal authority to sign this authorization agreement to continue.")
+      validation_error("You must confirm that you are a parent with legal authority to sign this authorization agreement to continue.")
 ---
 code: |
   # This form is for one child and one caregiver
@@ -282,7 +282,7 @@ fields:
     maxlength: 158
 validation code: |
   if not users[0].address.address or not users[0].address.city or not users[0].address.state or not users[0].address.zip:
-      raise ValidationError("Please enter the full address for Parent 1.")
+      validation_error("Please enter the full address for Parent 1.")
 ---
 sets:
   - users[1].address.address
@@ -408,7 +408,7 @@ fields:
     datatype: yesno
 validation code: |
   if not notary_instructions_acknowledgement:
-      raise validation_error("You must acknowledge the notary requirement to continue.")
+      validation_error("You must acknowledge the notary requirement to continue.")
 ---
 id: mailing_requirement
 question: |
@@ -428,7 +428,7 @@ fields:
 validation code: |
   if other_parent_known and (not other_parent_will_sign):
       if not mailing_requirement_acknowledgement:
-          raise validation_error("You must acknowledge the mailing requirement to continue.")
+          validation_error("You must acknowledge the mailing requirement to continue.")
 ---
 id: preview authorization_agreement_for_voluntary_adult_caregiver
 question: |
