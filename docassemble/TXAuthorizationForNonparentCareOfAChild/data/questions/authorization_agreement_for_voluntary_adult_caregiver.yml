@@ -158,6 +158,27 @@ code: |
   )
   authorization_agreement_for_voluntary_adult_caregiver_download
 ---
+variable name: caregiver_relationship_data
+data:
+  adult_caregiver: |
+    Adult caregiver of my choice
+  parental_child_safety_placement: |
+    Parental Child Safety Placement voluntary caregiver assigned by Department of Family and Protective Services (DFPS)
+---
+variable name: child_court_involvement_data
+data:
+  no_court_case: |
+    There is no court order or pending case about this child.
+  court_case_with_approval: |
+    There is a court order or pending case, and the court has approved this agreement.
+---
+variable name: agreement_term_choice_data
+data:
+  six_months: |
+    Up to six months from the date it is signed
+  earlier_date: |
+    Set an earlier expiration date
+---
 id: Authorization_Agreement_for_Voluntary_Adult_Caregiver
 continue button field: authorization_agreement_for_voluntary_adult_caregiver_intro
 question: |
@@ -207,7 +228,7 @@ fields:
     datatype: yesno
 validation code: |
   if not eligibility_acknowledgement:
-      raise ValidationError("You must confirm that you are a parent with legal authority to sign this authorization agreement to continue.")
+      raise validation_error("You must confirm that you are a parent with legal authority to sign this authorization agreement to continue.")
 ---
 code: |
   # This form is for one child and one caregiver
@@ -216,36 +237,47 @@ code: |
   users.there_is_another = False
 ---
 id: child_information
+sets:
+  - children[0].name.first
+  - children[0].name.last
 question: |
   Child's information
 subquestion: |
   Enter the child's name and date of birth.
 fields:
-  - "Child's full name": children[0].name
-    datatype: name
+  - code: |
+      children[0].name_fields()
   - "Child's date of birth": children[0].birthdate
-    datatype: date
+    datatype: Birthdate
 ---
-id: parent_1_information
-question: |
-  Parent 1 information
-subquestion: |
-  Enter the information for the parent completing this form.
 sets:
   - users[0].address.address
   - users[0].address.city
   - users[0].address.state
   - users[0].address.zip
+id: parent_1_information
+question: |
+  Parent 1 information
+subquestion: |
+  Enter the information for the parent completing this form.
 fields:
-  - "Parent 1 full name": users[0].name
-    datatype: name
+  - code: |
+      users[0].name_fields()
   - code: |
       users[0].address_fields()
   - "Parent 1 phone number": users[0].phone_number
   - "Other contact information (optional)": users1_other_contact
     input type: area
     maxlength: 158
+validation code: |
+  if not users[0].address.address or not users[0].address.city or not users[0].address.state or not users[0].address.zip:
+      raise ValidationError("Please enter the full address for Parent 1.")
 ---
+sets:
+  - users[1].address.address
+  - users[1].address.city
+  - users[1].address.state
+  - users[1].address.zip
 id: other_parent_information
 question: |
   Other parent information
@@ -253,23 +285,18 @@ subquestion: |
   If the child's other parent is known, enter their information. If that parent
   will sign the agreement, we will include a signature line for them. If they do
   not sign, you must mail them a copy within 10 days after the agreement is signed.
-sets:
-  - users[1].address.address
-  - users[1].address.city
-  - users[1].address.state
-  - users[1].address.zip
 fields:
   - "Is the child's other parent known?": other_parent_known
     datatype: yesnoradio
   - "Will the other parent sign the agreement?": other_parent_will_sign
     datatype: yesnoradio
     show if: other_parent_known
-  - "Other parent full name": users[1].name
-    datatype: name
-    show if: other_parent_known
   - code: |
-      users[1].address_fields()
-    show if: other_parent_known
+      users[1].name_fields(show_if={"variable": "other_parent_known", "is": True})
+    # show if: other_parent_known
+  - code: |
+      users[1].address_fields(show_if={"variable": "other_parent_known", "is": True})
+    # show if: other_parent_known
   - "Other parent phone number": users[1].phone_number
     show if: other_parent_known
   - "Other parent other contact information (optional)": users2_other_contact
@@ -304,8 +331,10 @@ fields:
   - "Relationship to child": caregivers1_relationship_to_child
     input type: radio
     choices:
-      - Adult caregiver
-      - Parental Child Safety Placement voluntary caregiver
+      - Adult caregiver of my choice: adult_caregiver
+      - Parental Child Safety Placement voluntary caregiver assigned by Department of Family and Protective Services (DFPS): parental_child_safety_placement
+        help: |
+          Choose this option if the caregiver is assigned by DFPS as part of a voluntary placement agreement.
   - code: |
       caregivers[0].address_fields()
   - "Caregiver phone number": caregivers[0].phone_number
@@ -327,8 +356,8 @@ fields:
   - "Court involvement status": child_court_involvement_status
     input type: radio
     choices:
-      - There is no court order or pending case about this child.
-      - There is a court order or pending case, and the court has approved this agreement.
+      - There is no court order or pending case about this child.: no_court_case
+      - There is a court order or pending case, and the court has approved this agreement.: court_case_with_approval
 ---
 id: agreement_term
 question: |
@@ -368,7 +397,7 @@ fields:
     datatype: yesno
 validation code: |
   if not notary_instructions_acknowledgement:
-      raise ValidationError("You must acknowledge the notary requirement to continue.")
+      raise validation_error("You must acknowledge the notary requirement to continue.")
 ---
 id: mailing_requirement
 question: |
@@ -388,7 +417,7 @@ fields:
 validation code: |
   if other_parent_known and (not other_parent_will_sign):
       if not mailing_requirement_acknowledgement:
-          raise ValidationError("You must acknowledge the mailing requirement to continue.")
+          raise validation_error("You must acknowledge the mailing requirement to continue.")
 ---
 id: preview authorization_agreement_for_voluntary_adult_caregiver
 question: |
@@ -455,7 +484,7 @@ review:
   - Edit: caregivers1_relationship_to_child
     button: |
       **Caregiver relationship to child**:
-      ${ caregivers1_relationship_to_child }
+      ${ caregiver_relationship_data[caregivers1_relationship_to_child] }
   - Edit: caregivers1_other_contact
     button: |
       **Caregiver other contact information**:
@@ -475,11 +504,11 @@ review:
   - Edit: child_court_involvement_status
     button: |
       **Court involvement status**:
-      ${ child_court_involvement_status }
+      ${ child_court_involvement_data[child_court_involvement_status] }
   - Edit: agreement_term_choice
     button: |
       **Agreement term**:
-      ${ agreement_term_choice }
+      ${ agreement_term_choice_data[agreement_term_choice] }
   - Edit: agreement_expiration_date
     button: |
       **Earlier expiration date**:
@@ -625,12 +654,14 @@ attachment:
       - "users2_other_contact": ${ users2_other_contact }
       - "caregivers1_name": ${ caregivers[0] }
       - "caregivers1_name__1": ${ caregivers[0] }
-      - "caregivers1_relationship_to_child": ${ caregivers1_relationship_to_child }
+      - "caregivers1_relationship_adult_caregiver": ${ caregivers1_relationship_to_child == "adult_caregiver" }
+      - "caregivers1_relationship_pcsp": ${ caregivers1_relationship_to_child == "parental_child_safety_placement" }
       - "caregivers1_address_on_one_line": ${ caregivers[0].address.on_one_line() }
       - "caregivers1_phone_number": ${ caregivers[0].phone_number }
       - "caregivers1_other_contact": ${ caregivers1_other_contact }
       - "no_other_custody_claimant": ${ no_other_custody_claimant }
-      - "child_court_involvement_status": ${ child_court_involvement_status }
+      - "child_court_no_court_case": ${ child_court_involvement_status == "no_court_case" }
+      - "child_court_case_with_approval": ${ child_court_involvement_status == "court_case_with_approval" }
       - "agreement_expiration_date": ${ agreement_expiration_date.format() if defined('agreement_expiration_date') else '' }
       - "agreement_early_termination_circumstances": ${ agreement_early_termination_circumstances }
       # - "users1_signature": ${ users[0].signature_if_final(i) }
