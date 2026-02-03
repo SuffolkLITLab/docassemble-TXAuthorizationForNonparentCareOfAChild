@@ -1,4 +1,7 @@
 ---
+translations:
+  - authorization_agreement_for_voluntary_adult_caregiver_es.xlsx
+---
 include:
   - docassemble.AssemblyLine:assembly_line.yml
   - docassemble.LITLabTheme:main.yml
@@ -8,6 +11,7 @@ metadata:
     Authorization Agreement for Voluntary Adult Caregiver
   short title: >-
     Authorization Agreement for Voluntary Adult Caregiver
+  default language: en
   description: |-
     This interview helps a parent complete a Texas Authorization Agreement for
     Voluntary Adult Caregiver.
@@ -92,6 +96,9 @@ metadata:
   form_numbers: []
   update_notes: |
 ---
+code: |
+  al_interview_languages = ["en", "es"]
+---
 template: interview_short_title
 content: Give a trusted adult permission to take care of your child
 ---
@@ -111,6 +118,10 @@ code: |
 ---
 sections:
   - review_authorization_agreement_for_voluntary_adult_caregiver: Review your answers
+---
+language: es
+sections:
+  - review_authorization_agreement_for_voluntary_adult_caregiver: Revise sus respuestas
 ---
 objects:
   - children: ALPeopleList.using(ask_number=True, target_number=1)
