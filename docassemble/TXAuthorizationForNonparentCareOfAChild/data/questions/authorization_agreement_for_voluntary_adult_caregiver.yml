@@ -3,9 +3,7 @@ translations:
   - authorization_agreement_for_voluntary_adult_caregiver_es.xlsx
 ---
 include:
-  - spanish_words.yml
----
-include:
+  - interview_text.yml
   - docassemble.AssemblyLine:assembly_line.yml
   - docassemble.LITLabTheme:main.yml
 ---
@@ -157,9 +155,6 @@ code: |
   caregivers[0].name.first
   caregivers1_relationship_to_child
   agreement_term_choice
-  caregiver_relationship_data
-  child_court_involvement_data
-  agreement_term_choice_data
   notary_instructions_acknowledgement
   if other_parent_known and (not other_parent_will_sign):
       mailing_requirement_acknowledgement
@@ -183,26 +178,6 @@ code: |
       },
   )
   authorization_agreement_for_voluntary_adult_caregiver_download
----
-variable name: caregiver_relationship_data
-data:
-  adult_caregiver: |
-    Adult caregiver of my choice
-  parental_child_safety_placement: |
-    Voluntary caregiver in a Parental Child Safety Placement (PCSP) approved by DFPS
----
-variable name: child_court_involvement_data
-data:
-  no_court_case: "As far as I know, none of the court situations listed above apply."
-  court_case_with_approval: "At least one court situation applies, and I have the written court order approving this agreement."
-  court_case_without_approval: "I need written approval and do not have it, or I am not sure whether I need it."
----
-variable name: agreement_term_choice_data
-data:
-  six_months: |
-    Six months from the date of signing, with automatic six-month renewals
-  earlier_date: |
-    Set an expiration date before six months
 ---
 id: Authorization_Agreement_for_Voluntary_Adult_Caregiver
 continue button field: authorization_agreement_for_voluntary_adult_caregiver_intro
@@ -238,6 +213,8 @@ subquestion: |
   you usually must mail copies to the other parent within 10 days, unless an exception applies.
 ---
 id: eligibility
+need:
+  - str(parent_authority_error)
 question: |
   Before you start
 subquestion: |
@@ -258,7 +235,7 @@ fields:
     datatype: yesno
 validation code: |
   if not eligibility_acknowledgement:
-      validation_error(word("You must confirm that you are a parent with legal authority to sign this authorization agreement to continue."))
+      validation_error(str(parent_authority_error))
 ---
 code: |
   # This form is for one child and one caregiver
@@ -286,6 +263,8 @@ sets:
   - users[0].address.state
   - users[0].address.zip
 id: parent_1_information
+need:
+  - str(parent_address_error)
 continue button field: primary_parent_information
 question: |
   Parent 1 information
@@ -302,7 +281,7 @@ fields:
     maxlength: 158
 validation code: |
   if not users[0].address.address or not users[0].address.city or not users[0].address.state or not users[0].address.zip:
-      validation_error(word("Please enter the full address for Parent 1."))
+      validation_error(str(parent_address_error))
 ---
 sets:
   - users[1].address.address
@@ -358,8 +337,8 @@ fields:
   - "Relationship to child": caregivers1_relationship_to_child
     input type: radio
     choices:
-      - Adult caregiver of my choice: adult_caregiver
-      - Voluntary caregiver in a Parental Child Safety Placement (PCSP) approved by DFPS: parental_child_safety_placement
+      - ${ adult_caregiver_label }: adult_caregiver
+      - ${ pcsp_caregiver_label }: parental_child_safety_placement
         help: |
           Choose this option only if DFPS approved the caregiver in a Parental Child Safety Placement agreement during a DFPS investigation or services case.
   - code: |
@@ -370,6 +349,9 @@ fields:
     maxlength: 158
 ---
 id: court_and_custody
+need:
+  - str(written_approval_error)
+  - str(conflicting_claim_error)
 question: |
   Court orders and other custody claims
 subquestion: |
@@ -390,14 +372,14 @@ fields:
   - "Court involvement status": child_court_involvement_status
     input type: radio
     choices:
-      - "As far as I know, none of the court situations listed above apply.": no_court_case
-      - "At least one court situation applies, and I have the written court order approving this agreement.": court_case_with_approval
-      - "I need written approval and do not have it, or I am not sure whether I need it.": court_case_without_approval
+      - ${ no_court_case_label }: no_court_case
+      - ${ court_case_with_approval_label }: court_case_with_approval
+      - ${ court_case_without_approval_label }: court_case_without_approval
 validation code: |
   if child_court_involvement_status == "court_case_without_approval":
-      validation_error(word("Stop here. Do not sign or use this agreement unless you have any required written court approval. Use the link above to find out how to ask the court."), field="child_court_involvement_status")
+      validation_error(str(written_approval_error), field="child_court_involvement_status")
   if not no_other_custody_claimant:
-      validation_error(word("You can continue only if there is no valid agreement already in effect and no conflicting claim. If you are unsure, get legal help before using this form."), field="no_other_custody_claimant")
+      validation_error(str(conflicting_claim_error), field="no_other_custody_claimant")
 ---
 id: agreement_term
 question: |
@@ -411,8 +393,8 @@ fields:
   - "How long will the permission last?": agreement_term_choice
     input type: radio
     choices:
-      - Six months from the date of signing, with automatic six-month renewals: six_months
-      - Set an expiration date before six months: earlier_date
+      - ${ six_month_agreement_label }: six_months
+      - ${ earlier_expiration_label }: earlier_date
   - "Earlier expiration date": agreement_expiration_date
     datatype: date
     show if:
@@ -427,6 +409,8 @@ fields:
       is: earlier_date
 ---
 id: notary_instructions
+need:
+  - str(notary_acknowledgement_error)
 question: |
   Notary required
 subquestion: |
@@ -437,9 +421,11 @@ fields:
     datatype: yesno
 validation code: |
   if not notary_instructions_acknowledgement:
-      validation_error(word("You must acknowledge the notary requirement to continue."))
+      validation_error(str(notary_acknowledgement_error))
 ---
 id: mailing_requirement
+need:
+  - str(mailing_acknowledgement_error)
 question: |
   Mailing a copy to the other parent
 subquestion: |
@@ -460,7 +446,7 @@ fields:
 validation code: |
   if other_parent_known and (not other_parent_will_sign):
       if not mailing_requirement_acknowledgement:
-          validation_error(word("You must acknowledge the mailing requirement to continue."))
+          validation_error(str(mailing_acknowledgement_error))
 ---
 id: preview authorization_agreement_for_voluntary_adult_caregiver
 question: |
@@ -473,7 +459,7 @@ subquestion: |
   Click the image to open it in a new tab. Click the "Edit answers" button
   to edit your answers.
 
-  ${ action_button_html(url_action('review_authorization_agreement_for_voluntary_adult_caregiver'), label=word('Edit answers'), color='info') }
+  ${ action_button_html(url_action('review_authorization_agreement_for_voluntary_adult_caregiver'), label=str(edit_answers_label), color='info') }
 
   Return to this tab to continue.
 continue button field: authorization_agreement_for_voluntary_adult_caregiver_preview_question
@@ -522,7 +508,7 @@ review:
   - Edit: caregivers1_relationship_to_child
     button: |
       **Caregiver relationship to child**:
-      ${ word(caregiver_relationship_data[caregivers1_relationship_to_child].strip()) }
+      ${ adult_caregiver_label if caregivers1_relationship_to_child == "adult_caregiver" else pcsp_caregiver_label }
   - Edit: caregivers1_other_contact
     button: |
       **Caregiver other contact information**:
@@ -543,11 +529,17 @@ review:
   - Edit: child_court_involvement_status
     button: |
       **Court involvement status**:
-      ${ word(child_court_involvement_data[child_court_involvement_status].strip()) }
+      % if child_court_involvement_status == "no_court_case":
+      ${ no_court_case_label }
+      % elif child_court_involvement_status == "court_case_with_approval":
+      ${ court_case_with_approval_label }
+      % else:
+      ${ court_case_without_approval_label }
+      % endif
   - Edit: agreement_term_choice
     button: |
       **Agreement term**:
-      ${ word(agreement_term_choice_data[agreement_term_choice].strip()) }
+      ${ six_month_agreement_label if agreement_term_choice == "six_months" else earlier_expiration_label }
   - Edit: agreement_expiration_date
     show if: agreement_term_choice == "earlier_date"
     button: |
@@ -646,13 +638,13 @@ subquestion: |
 
   View and download your form below. Click the "Edit answers" button to fix any mistakes.
 
-  ${ action_button_html(url_action('review_authorization_agreement_for_voluntary_adult_caregiver'), label=word('Edit answers'), color='info') }
+  ${ action_button_html(url_action('review_authorization_agreement_for_voluntary_adult_caregiver'), label=str(edit_answers_label), color='info') }
 
 
   ${ al_user_bundle.download_list_html() }
 
 
-  ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=False, email_label=str(download_email_label)) }
 
 progress: 100
 ---
@@ -668,11 +660,7 @@ objects:
 ---
 initial: True
 code: |
-  authorization_agreement_for_voluntary_adult_caregiver_Post_interview_instructions.title = word("Instructions")
-  authorization_agreement_for_voluntary_adult_caregiver_attachment.title = word("Authorization Agreement for Voluntary Adult Caregiver")
-  al_user_bundle.title = word("All forms to download for your records")
-  al_court_bundle.title = word("All forms to deliver to court")
-  set_parts(title=authorization_agreement_for_voluntary_adult_caregiver_attachment.title)
+  set_parts(title=str(authorization_agreement_for_voluntary_adult_caregiver_attachment.title))
 ---
 # Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is
 # used for "preview" and "final" keys, and logic in the template checks the value of

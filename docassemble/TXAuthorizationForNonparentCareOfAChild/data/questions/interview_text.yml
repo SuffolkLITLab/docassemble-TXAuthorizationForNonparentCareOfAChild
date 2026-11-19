@@ -1,0 +1,99 @@
+---
+id: parent_authority_error
+template: parent_authority_error
+content: |
+  You must confirm that you are a parent with legal authority to sign this authorization agreement to continue.
+---
+id: parent_address_error
+template: parent_address_error
+content: |
+  Please enter the full address for Parent 1.
+---
+id: written_approval_error
+template: written_approval_error
+content: |
+  Stop here. Do not sign or use this agreement unless you have any required written court approval. Use the link above to find out how to ask the court.
+---
+id: conflicting_claim_error
+template: conflicting_claim_error
+content: |
+  You can continue only if there is no valid agreement already in effect and no conflicting claim. If you are unsure, get legal help before using this form.
+---
+id: notary_acknowledgement_error
+template: notary_acknowledgement_error
+content: |
+  You must acknowledge the notary requirement to continue.
+---
+id: mailing_acknowledgement_error
+template: mailing_acknowledgement_error
+content: |
+  You must acknowledge the mailing requirement to continue.
+---
+id: adult_caregiver_label
+template: adult_caregiver_label
+content: |
+  Adult caregiver of my choice
+---
+id: pcsp_caregiver_label
+template: pcsp_caregiver_label
+content: |
+  Voluntary caregiver in a Parental Child Safety Placement (PCSP) approved by DFPS
+---
+id: no_court_case_label
+template: no_court_case_label
+content: |
+  As far as I know, none of the court situations listed above apply.
+---
+id: court_case_with_approval_label
+template: court_case_with_approval_label
+content: |
+  At least one court situation applies, and I have the written court order approving this agreement.
+---
+id: court_case_without_approval_label
+template: court_case_without_approval_label
+content: |
+  I need written approval and do not have it, or I am not sure whether I need it.
+---
+id: six_month_agreement_label
+template: six_month_agreement_label
+content: |
+  Six months from the date of signing, with automatic six-month renewals
+---
+id: earlier_expiration_label
+template: earlier_expiration_label
+content: |
+  Set an expiration date before six months
+---
+id: edit_answers_label
+template: edit_answers_label
+content: |
+  Edit answers
+---
+id: download_email_label
+template: download_email_label
+content: |
+  Email
+---
+id: instructions_title
+template: authorization_agreement_for_voluntary_adult_caregiver_Post_interview_instructions.title
+reconsider: True
+content: |
+  Instructions
+---
+id: agreement_title
+template: authorization_agreement_for_voluntary_adult_caregiver_attachment.title
+reconsider: True
+content: |
+  Authorization Agreement for Voluntary Adult Caregiver
+---
+id: user_bundle_title
+template: al_user_bundle.title
+reconsider: True
+content: |
+  All forms to download for your records
+---
+id: court_bundle_title
+template: al_court_bundle.title
+reconsider: True
+content: |
+  All forms to deliver to court
