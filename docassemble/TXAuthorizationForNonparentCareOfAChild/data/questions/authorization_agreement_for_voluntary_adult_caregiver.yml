@@ -660,7 +660,27 @@ objects:
 ---
 initial: True
 code: |
-  set_parts(title=str(authorization_agreement_for_voluntary_adult_caregiver_attachment.title))
+  # Let localized screen parts replace titles stored in earlier sessions.
+  set_parts(title=None, short_title=None, tab_title=None)
+---
+default screen parts:
+  title: ${ authorization_agreement_for_voluntary_adult_caregiver_attachment.title }
+  short title: ${ authorization_agreement_for_voluntary_adult_caregiver_attachment.title }
+  tab title: ${ authorization_agreement_for_voluntary_adult_caregiver_attachment.title }
+  logo: ${ localized_interview_logo }
+  short logo: ${ localized_interview_logo }
+---
+template: localized_interview_logo
+content: |
+  <span class="title-container">
+    <span class="al-logo">
+      <img src="${ al_logo.url_for() }" alt="${ al_logo.alt_text }"/>
+    </span>
+    <span class="al-title">
+      <span class="title-row-1">${ AL_ORGANIZATION_TITLE }</span>
+      <span class="title-row-2">${ authorization_agreement_for_voluntary_adult_caregiver_attachment.title }</span>
+    </span>
+  </span>
 ---
 # Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is
 # used for "preview" and "final" keys, and logic in the template checks the value of
