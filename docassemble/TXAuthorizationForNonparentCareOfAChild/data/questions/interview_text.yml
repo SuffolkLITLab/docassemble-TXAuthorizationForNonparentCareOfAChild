@@ -84,7 +84,7 @@ id: agreement_title
 template: authorization_agreement_for_voluntary_adult_caregiver_attachment.title
 reconsider: True
 content: |
-  Authorization Agreement for Voluntary Adult Caregiver
+  Texas Authorization Agreement for Voluntary Adult Caregiver
 ---
 id: user_bundle_title
 template: al_user_bundle.title

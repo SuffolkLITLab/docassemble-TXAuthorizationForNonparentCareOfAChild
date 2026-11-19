@@ -9,9 +9,9 @@ include:
 ---
 metadata:
   title: >-
-    Authorization Agreement for Voluntary Adult Caregiver
+    Texas Authorization Agreement for Voluntary Adult Caregiver
   short title: >-
-    Authorization Agreement for Voluntary Adult Caregiver
+    Texas Authorization Agreement for Voluntary Adult Caregiver
   default language: en
   description: |-
     This interview helps a parent complete a Texas Authorization Agreement for
@@ -108,7 +108,7 @@ code: |
   al_interview_languages = ["en", "es"]
 ---
 template: interview_short_title
-content: Give a trusted adult permission to take care of your child
+content: Give a trusted adult permission to take care of your child in Texas
 ---
 code: |
   # This controls the default country and list of states in address field questions
@@ -182,10 +182,10 @@ code: |
 id: Authorization_Agreement_for_Voluntary_Adult_Caregiver
 continue button field: authorization_agreement_for_voluntary_adult_caregiver_intro
 question: |
-  Authorization Agreement for Voluntary Adult Caregiver
+  ${ authorization_agreement_for_voluntary_adult_caregiver_attachment.title }
 subquestion: |
-  This form lets a parent give an adult who is not the child's parent temporary
-  permission to make some decisions for the child.
+  This form lets a parent in Texas give an adult who is not the child's parent
+  temporary permission to make some decisions for the child.
 
   **Already have a court order or an open case involving the child?** Check the
   upcoming screens before you use this agreement. You may need written court approval.
